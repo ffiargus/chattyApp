@@ -2,60 +2,25 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
-let nextId = 4;
-
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id: 1,
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          id: 2,
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      messages: []
     }
   }
 
-  componentDidMount() {
-    console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: messages})
-    }, 3000);
-  }
-
-  render() {
-
-
-    return (
-      <div>
-      <MessageList message={this.state.messages}/>
-      <ChatBar user={this.state.currentUser} addMessage={this._addMessage}/>
-      </div>
-    );
-  }
 
   _addMessage = (message) => {
+
     this.setState(prevState => {
       const messages = prevState.messages
       const newMessage = {
-        id: nextId++,
-        username: message['chatbar-username'],
-        content: message['chatbar-message']
+        id: message.id,
+        username: message.username,
+        content: message.content
       }
       messages.push(newMessage)
 
@@ -66,6 +31,44 @@ class App extends Component {
     })
   }
 
+  componentDidMount() {
+
+    const PORT = 3001;
+    this.socket = new WebSocket("ws://localhost:"+PORT)
+    console.log("connected to server")
+
+
+    this.socket.onopen = () => {
+
+      this.socket.onmessage = (e) => {
+          const message = JSON.parse(e.data);
+          this._addMessage(message);
+
+      }
+    }
+
+  }
+
+  render() {
+
+
+    return (
+      <div>
+      <MessageList message={this.state.messages}/>
+      <ChatBar user={this.state.currentUser} addMessage={this._sendMessage}/>
+      </div>
+    );
+  }
+
+  _sendMessage = (message) => {
+    const newMessage = {
+        type: 'postMessage',
+        username: message['chatbar-username'],
+        content: message['chatbar-message']
+      }
+
+    this.socket.send(JSON.stringify(newMessage));
+  }
 
 
 }
