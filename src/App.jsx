@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
+let nextId = 4;
+
 class App extends Component {
 
   constructor(props) {
@@ -42,9 +44,29 @@ class App extends Component {
     return (
       <div>
       <MessageList message={this.state.messages}/>
-      <ChatBar user={this.state.currentUser}/>
+      <ChatBar user={this.state.currentUser} addMessage={this._addMessage}/>
       </div>
     );
   }
+
+  _addMessage = (message) => {
+    this.setState(prevState => {
+      const messages = prevState.messages
+      const newMessage = {
+        id: nextId++,
+        username: message['chatbar-username'],
+        content: message['chatbar-message']
+      }
+      messages.push(newMessage)
+
+      return {
+        messages: messages
+      }
+
+    })
+  }
+
+
+
 }
 export default App;
