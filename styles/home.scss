@@ -1,3 +1,9 @@
+$color1: red;
+$color2: blue;
+$color3: yellow;
+$color4: green;
+
+
 h1 {
   color: tomato;
 }
@@ -89,4 +95,8 @@ body {
   line-height: 60px;
   padding: 0 10px;
   text-decoration: none;
+}
+
+.navbar-counter {
+  float: right;
 }
