@@ -17,6 +17,7 @@ class App extends Component {
   }
 
   _addMessage = (message) => {
+    let newStr = message.content.replace(/\S+\.(png|jpg|gif)/i, `<img src="${message.content.match(/\S+\.(jpg|png|gif)/gi)}" />`);
 
     this.setState(prevState => {
       const messages = prevState.messages
@@ -24,7 +25,7 @@ class App extends Component {
         type: message.type,
         id: message.id,
         username: message.username,
-        content: message.content,
+        content: newStr,
         color: message.color
       }
       messages.push(newMessage)
