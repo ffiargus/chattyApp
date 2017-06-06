@@ -24,20 +24,25 @@ let countObj = {
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  const broadcast = (message) => {
+    wss.clients.forEach((c) => {
+      c.send(JSON.stringify(message));
+    })
+  }
 
   countObj.content++;
-
+  let username = 'Anonymous';
+  let sysMessage = {
+      type: 'incomingNotification',
+      content: `${username} joined the chat`
+    };
+  broadcast(sysMessage);
 
 
   allMessages.forEach((message) => {
     ws.send(JSON.stringify(message));
   })
 
-  const broadcast = (message) => {
-    wss.clients.forEach((c) => {
-      c.send(JSON.stringify(message));
-    })
-  }
 
   broadcast(countObj);
 
@@ -45,6 +50,7 @@ wss.on('connection', (ws) => {
     const message = JSON.parse(rawMessage);
     message.id = uuidV4();
     if (message.type === 'postMessage') {
+      username = message.username;
       message.type = 'incomingMessage';
       allMessages.push(message);
       console.log(message);
@@ -52,6 +58,7 @@ wss.on('connection', (ws) => {
     } else if (message.type === 'postNotification') {
       message.content = `**${message.oldname}** changed their name to **${message.username}**`
       message.type = 'incomingNotification';
+      username = message.username;
       broadcast(message);
     }
 
@@ -61,6 +68,11 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     countObj.content--;
     broadcast(countObj);
+    sysMessage = {
+      type: 'incomingNotification',
+      content: `${username} left the chat`
+    };
+    broadcast(sysMessage);
     console.log('Client disconnected')
   });
 });

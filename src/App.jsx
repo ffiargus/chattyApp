@@ -50,38 +50,38 @@ class App extends Component {
       let userColor;
       switch (color) {
         case 1:
-          this.state.userColor = 'red';
+          this.setState({userColor: 'red'});
           break;
         case 2:
-          this.state.userColor = 'blue';
+          this.setState({userColor: 'blue'});
           break;
         case 3:
-          this.state.userColor = 'green';
+          this.setState({userColor: 'purple'});
           break;
         case 0:
-          this.state.userColor = 'purple';
+          this.setState({userColor: 'green'});
           break;
       }
     }
 
 
     this.socket.onmessage = (e) => {
-        const message = JSON.parse(e.data);
+      const message = JSON.parse(e.data);
 
-        switch(message.type) {
-          case "incomingMessage":
-            // handle incoming message
-          case "incomingNotification":
-            this._addMessage(message);
-            // handle incoming notification
-            break;
-          case "count":
-            this.setState({count: message.content})
-            break;
-          default:
-            // show an error in the console if the message type is unknown
-            throw new Error("Unknown event type " + data.type);
-        }
+      switch(message.type) {
+        case "incomingMessage":
+          // handle incoming message
+        case "incomingNotification":
+          this._addMessage(message);
+          // handle incoming notification
+          break;
+        case "count":
+          this.setState({count: message.content})
+          break;
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error("Unknown event type " + data.type);
+      }
 
     }
 
@@ -113,13 +113,13 @@ class App extends Component {
 
   _sendNotification = (message) => {
     const newMessage = {
-        type: 'postNotification',
-        username: message['chatbar-username'],
-        oldname: this.state.currentUser.name
+      type: 'postNotification',
+      username: message['chatbar-username'],
+      oldname: this.state.currentUser.name
     }
 
 
-    this.state.currentUser.name = newMessage.username;
+    this.setState({currentUser : {name : newMessage.username}});
     console.log(newMessage);
     this.socket.send(JSON.stringify(newMessage));
   }

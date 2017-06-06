@@ -6,9 +6,12 @@ A application that enables users to have live conversations, built using react a
 ### Getting Started
 
 Fork this repository, then clone your fork of this repository.
+
 Install dependencies using the npm install command.
-Start the web server using the npm run local command. The app will be served at http://localhost:3000/. The WebSocket server should then be started.
-Go to http://localhost:3000/ in your browser.
+
+Start the web server using the npm start command. The app will be served at http://localhost:3000/.
+
+The WebSocket server should then be started in a seperate terminal session using 'node wsServer.js'.
 
 ### Dependencies
 
